@@ -1,0 +1,8 @@
+*.o
+*.a
+test
+*.swp
+.vscode
+.vs
+.DS_Store
+

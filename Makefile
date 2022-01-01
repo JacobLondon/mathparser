@@ -9,6 +9,7 @@ TRASH = *.o *.a
 MPARSER_T = libmparser.a
 MPARSER_O = mparser.o
 TEST_T = test
+TEST_O = test.o
 
 .PHONY: clean
 
@@ -19,9 +20,9 @@ $(MPARSER_T): $(MPARSER_O)
 	$(AR) $@ $(MPARSER_O)
 	$(RANLIB) $@
 
-$(TEST_T):
-	$(CC) -o $@ test.c $(MPARSER_T)
+$(TEST_T): $(TEST_O) $(MPARSER_T)
+	$(CC) -o $@ $(TEST_O) $(MPARSER_T)
 
 clean:
-	$(RM_F) $(TRASH) $(MPARSER_T)
+	$(RM_F) $(TRASH) $(MPARSER_T) $(TEST_T)
 

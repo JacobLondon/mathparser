@@ -16,9 +16,15 @@ typedef enum MparserTokenTypeEnum
 
 typedef struct MparserTokenStruct
 {
-	char *value;
 	MparserTokenType type;
+	union {
+		char *value;
+		double f;
+	};
 } MparserToken;
+
+/** lookup a numeric value to a symbol. Return 0 on success, >0 if failure */
+typedef int (* Mlexer_lookup_func)(char *literal, double *out);
 
 typedef struct MlexerStruct
 {
@@ -26,21 +32,26 @@ typedef struct MlexerStruct
 	char *current;
 	long index;
 	long length;
+	Mlexer_lookup_func lookup;
 } Mlexer;
 
 typedef struct MparserStruct
 {
 	Mlexer lexer;
+	MparserToken current;
 } Mparser;
 
-/** initialize a math parser, return 0 on success >0 otherwise */
-int mparser_init(Mparser *m);
-/** clean up a math parser */
+/**
+ * Initialize a math parser, return 0 on success >0 otherwise.
+ * Nullable function which fills the numeric value of that symbol
+ */
+void mparser_init(Mparser *m, Mlexer_lookup_func lookup);
+/** optional, clean up a math parser */
 void mparser_cleanup(Mparser *m);
 
 /**
  * Solve a string expression consisting of:
- * - numbers: 0x[0-9]|[1-9][0-9]*|[1-9]+\.[0-9]*|0\.[0-9]*
+ * - atoms: 0x[0-9]|[1-9][0-9]*|[1-9]+\.[0-9]*|0\.[0-9]*|[str:32]
  * - parentheses
  * - operations: + - * /
  *

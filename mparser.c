@@ -6,7 +6,8 @@
 #include <errno.h>
 #include "mparser.h"
 
-#define MYDEBUG(...) printf(__VA_ARGS__)
+//#define MYDEBUG(...) printf(__VA_ARGS__)
+#define MYDEBUG(...)
 
 /* lexer */
 static void print_token(MparserToken *t);
@@ -172,7 +173,8 @@ static void lexer_advanceto(Mlexer *lexer, char *p)
 	assert(lexer != NULL);
 	assert(p != NULL);
 
-	while (lexer->current && lexer->current != p) {
+	/* endptr always goes one char too far so go 1 less */
+	while (lexer->current && lexer->current != p - 1) {
 		lexer_advance(lexer);
 	}
 }
